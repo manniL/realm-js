@@ -7,6 +7,7 @@
 * Fixed possible segfault in sync client where async callback was using object after being deallocated. ([realm/realm-core#6053](https://github.com/realm/realm-core/issues/6053), since v10.11.0)
 * Fixed crash when using client reset with recovery and flexible sync with a single subscription ([#6070](https://github.com/realm/realm-core/issues/6070), since v10.19.5)
 * If `path` is defined in the configuration, it will used for synced Realms too. Relative paths will be appended to a default prefix (prefix is computed using app id and user id). Absolute paths are left untouched. (since v10.0.0)
+* After introducing class-based models, we don't need to manipulate `Reflect.construct`. ([#5055](https://github.com/realm/realm-js/issues/5055), since v11.0.0)
 
 ### Compatibility
 * React Native >= v0.70.0

@@ -1099,7 +1099,7 @@ module.exports = {
     // we haven't uploaded our recent changes -- we're not allowed to copy
     TestCase.assertThrowsContaining(() => {
       realm1.writeCopyTo(outputConfig2);
-    }, "Could not write file as not all client changes are integrated in server");
+    }, "All client changes must be integrated in server before writing copy");
 
     // log back in and upload the changes we made locally
     user1 = await app.logIn(credentials1);
@@ -1465,7 +1465,7 @@ module.exports = {
     }, "'sync' property must be an object");
     TestCase.assertThrowsContaining(() => {
       realm.writeCopyTo({ path: "output", sync: { flexible: true, user } });
-    }, "Realm cannot be converted if flexible sync is enabled");
+    }, "Cannot convert Realms to flexible sync Realms");
     /*
      *  Test 2:  check that `writeCopyTo` can only be called at the right time
      */

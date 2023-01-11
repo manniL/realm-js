@@ -897,7 +897,7 @@ module.exports = {
           primaryCol: 0,
           valueCol: "val0",
         });
-      }, "Attempting to create an object of type 'IntPrimaryObject' with an existing primary key value '0'.");
+      }, "Attempting to create an object of type 'IntPrimaryObject' with an existing primary key value '0'");
 
       realm.create(
         "IntPrimaryObject",
@@ -948,7 +948,7 @@ module.exports = {
 
       TestCase.assertThrowsContaining(
         () => realm.create("AllPrimaryTypesObject", values),
-        "Attempting to create an object of type 'AllPrimaryTypesObject' with an existing primary key value ''0''.",
+        "Attempting to create an object of type 'AllPrimaryTypesObject' with an existing primary key value ''0''",
       );
 
       const obj1 = realm.create(
@@ -1412,11 +1412,11 @@ module.exports = {
     );
     TestCase.assertThrowsContaining(
       () => realm.objectForPrimaryKey("IntPrimaryObject"),
-      "Invalid null value for non-nullable primary key.",
+      "Invalid null value for non-nullable primary key",
     );
     TestCase.assertThrowsContaining(
       () => realm.objectForPrimaryKey("InvalidClass", 0),
-      "Object type 'InvalidClass' not found in schema.",
+      "Object type 'InvalidClass' not found in schema",
     );
 
     TestCase.assertThrowsContaining(
@@ -1961,7 +1961,7 @@ module.exports = {
 
     TestCase.assertThrowsContaining(() => {
       new Realm({ path: "realm-bundle.realm", disableFormatUpgrade: true });
-    }, "The Realm file format must be allowed to be upgraded in order to proceed.");
+    }, "Database upgrade required but prohibited");
   },
 
   // FIXME: We need to test adding a property also calls the listener

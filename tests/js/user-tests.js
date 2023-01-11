@@ -590,7 +590,7 @@ module.exports = {
     let didFail = false;
     let user2 = await app.logIn(Realm.Credentials.emailPassword(validEmail, validPassword)).catch((err) => {
       TestCase.assertEqual(err.message, "invalid username/password");
-      TestCase.assertEqual(err.code, 50);
+      TestCase.assertEqual(err.code, "InvalidPassword");
       didFail = true;
     });
     TestCase.assertUndefined(user2);

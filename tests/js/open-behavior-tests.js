@@ -561,7 +561,7 @@ module.exports = {
       await openPromise2;
       throw new TestError("openPromise2 should have been rejected..");
     } catch (err) {
-      TestCase.assertEqual(err.message, "Operation canceled");
+      TestCase.assertEqual(err.message, "Sync session became inactive");
     }
   },
 

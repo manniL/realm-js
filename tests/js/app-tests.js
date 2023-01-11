@@ -123,7 +123,7 @@ module.exports = {
     var didFail = false;
     let user = await app.logIn(credentials).catch((err) => {
       TestCase.assertEqual(err.message, "invalid username/password");
-      TestCase.assertEqual(err.code, 50);
+      TestCase.assertEqual(err.code, "InvalidPassword");
       didFail = true;
     });
     TestCase.assertUndefined(user);

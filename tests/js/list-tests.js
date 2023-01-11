@@ -277,7 +277,7 @@ module.exports = {
         "Object of type (PrimitiveArrays) does not match List type (TestObject)",
       );
       TestCase.assertThrowsContaining(() => (array[0] = array), "Missing value for property 'TestObject.doubleCol'");
-      TestCase.assertThrowsContaining(() => (array[2] = { doubleCol: 1 }), "Requested index 2 greater than max 1");
+      TestCase.assertThrowsContaining(() => (array[2] = { doubleCol: 1 }), "Requested index 2 calling set() on list 'LinkTypesObject.arrayCol' when max is 1");
       TestCase.assertThrowsContaining(() => (array[-1] = { doubleCol: 1 }), "Index -1 cannot be less than zero.");
 
       array["foo"] = "bar";
@@ -473,11 +473,11 @@ module.exports = {
 
     TestCase.assertThrowsContaining(
       () => (obj.arrayCol = []),
-      "Cannot modify managed objects outside of a write transaction.",
+      "Cannot modify managed List outside of a write transaction",
     );
     TestCase.assertThrowsContaining(
       () => (prim.bool = []),
-      "Cannot modify managed objects outside of a write transaction.",
+      "Cannot modify managed List outside of a write transaction",
     );
   },
 
@@ -567,7 +567,7 @@ module.exports = {
       TestCase.assertThrowsContaining(() => array.pop(1), "Invalid argument");
     });
 
-    TestCase.assertThrowsContaining(() => array.pop(), "Cannot modify managed objects outside of a write transaction.");
+    TestCase.assertThrowsContaining(() => array.pop(), "Cannot modify managed List outside of a write transaction.");
   },
 
   testListUnshift: function () {
@@ -627,7 +627,7 @@ module.exports = {
 
     TestCase.assertThrowsContaining(() => {
       array.shift();
-    }, "Cannot modify managed objects outside of a write transaction.");
+    }, "Cannot modify managed List outside of a write transaction.");
   },
 
   testListSplice: function () {
@@ -1421,8 +1421,9 @@ module.exports = {
       TestCase.assertSimilar(list.type, list.max(), list[2]);
 
       if (list.type === "date") {
-        TestCase.assertThrowsContaining(() => list.sum(), "Cannot sum 'date' array: operation not supported");
-        TestCase.assertThrowsContaining(() => list.avg(), "Cannot avg 'date' array: operation not supported");
+        const type = "date" + (list.optional ? "?" : "");
+        TestCase.assertThrowsContaining(() => list.sum(), `Operation 'sum' not supported for ${type} list`);
+        TestCase.assertThrowsContaining(() => list.avg(), `Operation 'average' not supported for ${type} list`);
         continue;
       }
 
@@ -1432,7 +1433,7 @@ module.exports = {
       TestCase.assertSimilar(list.type, list.avg(), avg);
     }
 
-    TestCase.assertThrowsContaining(() => object.bool.min(), "Cannot min 'bool' array: operation not supported");
+    TestCase.assertThrowsContaining(() => object.bool.min(), "Operation 'min' not supported for bool list");
     TestCase.assertThrowsContaining(
       () => object.int.min("foo"),
       "Invalid arguments: at most 0 expected, but 1 supplied",
@@ -1492,7 +1493,7 @@ module.exports = {
     ["bool", "string", "data"].forEach((colName) => {
       TestCase.assertThrowsContaining(
         () => object.list.min(colName + "Col"),
-        `Cannot min property '${colName}Col': operation not supported for '${colName}' properties`,
+        `Operation 'min' not supported for ${colName}? property 'NullableBasicTypesObject.${colName}Col'`,
       );
     });
 
@@ -1500,7 +1501,7 @@ module.exports = {
     ["bool", "string", "data"].forEach((colName) => {
       TestCase.assertThrowsContaining(
         () => object.list.max(colName + "Col"),
-        `Cannot max property '${colName}Col': operation not supported for '${colName}' properties`,
+        `Operation 'max' not supported for ${colName}? property 'NullableBasicTypesObject.${colName}Col'`,
       );
     });
 
@@ -1508,7 +1509,7 @@ module.exports = {
     ["bool", "string", "date", "data"].forEach((colName) => {
       TestCase.assertThrowsContaining(
         () => object.list.avg(colName + "Col"),
-        `Cannot avg property '${colName}Col': operation not supported for '${colName}' properties`,
+        `Operation 'average' not supported for ${colName}? property 'NullableBasicTypesObject.${colName}Col'`,
       );
     });
 
@@ -1516,7 +1517,7 @@ module.exports = {
     ["bool", "string", "date", "data"].forEach((colName) => {
       TestCase.assertThrowsContaining(
         () => object.list.sum(colName + "Col"),
-        `Cannot sum property '${colName}Col': operation not supported for '${colName}' properties`,
+        `Operation 'sum' not supported for ${colName}? property 'NullableBasicTypesObject.${colName}Col'`,
       );
     });
   },

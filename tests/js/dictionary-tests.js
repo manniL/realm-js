@@ -644,12 +644,16 @@ module.exports = {
     let realm = new Realm({ schema: [DictSchema] });
     realm.write(() => realm.create(DictSchema.name, dict));
 
-    let data = realm.objects(DictSchema.name);
-    TestCase.assertEqual(
-      JSON.stringify(data.toJSON()),
-      JSON.stringify([dict]),
-      "toJSON should return the correct result",
-    );
+    const data = realm.objects(DictSchema.name);
+    const asJson = data.toJSON();
+    TestCase.assertEqual(asJson.length, 1, "length");
+    TestCase.assertEqual(Object.keys(asJson[0]).length, 1, "one property");
+    TestCase.assertDefined(asJson[0].a, "a exists");
+    const a = asJson[0].a;
+    TestCase.assertEqual(Object.keys(a).length, 3, "three properties");
+    Object.keys(a).forEach(k => {
+      TestCase.assertEqual(a[k], dict.a[k], `value of '${k}'`);
+    });
 
     realm.close();
   },

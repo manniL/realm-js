@@ -21,6 +21,11 @@ if(DEFINED CMAKE_JS_VERSION)
         add_link_options(-fuse-ld=gold)
         add_link_options(-Wl,-z,noexecstack)
 	    add_link_options(-Wl,--warn-execstack)
+    elseif(WIN32)
+        if(NOT CMAKE_GENERATOR_PLATFORM)
+            # TODO: Remove when Core merges the exception unification branch to its latest master
+            set(CMAKE_GENERATOR_PLATFORM ${NODE_ARCH})
+        endif()
     endif()
 endif()
 

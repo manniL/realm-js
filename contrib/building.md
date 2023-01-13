@@ -247,18 +247,6 @@ On Windows you will need to setup the environment for node-gyp:
   npm config set msbuild_path "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"
   ```
 
-You also need to install openssl libraries with vcpkg:
-
-```cmd
-git clone https://github.com/Microsoft/vcpkg
-cd vcpkg
-bootstrap-vcpkg.bat
-vcpkg install openssl:x64-windows-static
-mkdir C:\src\vcpkg\installed\x64-windows-static\lib
-copy .\packages\openssl-windows_x64-windows-static\lib\libeay32.lib C:\src\vcpkg\installed\x64-windows-static\lib\
-copy .\packages\openssl-windows_x64-windows-static\lib\ssleay32.lib C:\src\vcpkg\installed\x64-windows-static\lib
-```
-
 #### Building for ARM/Linux
 
 You can build Realm JS for ARM/Linux from source and include it in your own project.

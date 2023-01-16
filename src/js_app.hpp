@@ -221,9 +221,10 @@ void AppClass<T>::constructor(ContextType ctx, ObjectType this_object, Arguments
     config.transport = AppClass<T>::transport_generator(Protected(Context::get_global_context(ctx)),
                                                         NetworkTransport::make_dispatcher());
 
-    config.platform = platform_os;
-    config.platform_version = platform_version;
-    config.sdk_version = "RealmJS/" + package_version;
+    config.device_info.platform = platform_os;
+    config.device_info.platform_version = platform_version;
+    config.device_info.sdk = "RealmJS";
+    config.device_info.sdk_version = package_version;
 
     auto realm_file_directory = default_realm_file_directory();
     ensure_directory_exists_for_file(realm_file_directory);

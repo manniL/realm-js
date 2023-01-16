@@ -129,7 +129,7 @@ describe("Realm objects", () => {
           );
         }),
       ).throws(
-        `Attempting to create an object of type '${PersonSchemaWithId.name}' with an existing primary key value '${_id}'.`,
+        `Attempting to create an object of type '${PersonSchemaWithId.name}' with an existing primary key value '${_id}'`,
       );
 
       // Expect only one instance of 'PersonSchemaWithId' in db after all updates

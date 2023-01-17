@@ -880,9 +880,11 @@ void SessionClass<T>::wait_for_completion(Direction direction, ContextType ctx, 
                 HANDLESCOPE(ctx);
                 std::vector<typename T::Value> arguments;
                 if (!status.is_ok()) {
+                    // the Status argument is currently always constructed from a std:error_code
+                    std::error_code error = status.get_std_error_code();
                     arguments.push_back(Object::create_obj(ctx, {
-                        {"message", Value::from_string(ctx, status.reason())},
-                        {"errorCode", Value::from_string(ctx, status.code_string())},
+                        {"message", Value::from_string(ctx, error.message())},
+                        {"errorCode", Value::from_number(ctx, error.value())},
                     }));
                 }
                 Function<T>::callback(ctx, callback, arguments.size(), arguments.data());

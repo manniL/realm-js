@@ -1465,7 +1465,7 @@ module.exports = {
     }, "'sync' property must be an object");
     TestCase.assertThrowsContaining(() => {
       realm.writeCopyTo({ path: "output", sync: { flexible: true, user } });
-    }, "Cannot convert Realms to flexible sync Realms");
+    }, "Realm cannot be converted to a flexible sync realm unless flexible sync is already enabled");
     /*
      *  Test 2:  check that `writeCopyTo` can only be called at the right time
      */

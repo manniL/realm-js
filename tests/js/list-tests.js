@@ -277,7 +277,10 @@ module.exports = {
         "Object of type (PrimitiveArrays) does not match List type (TestObject)",
       );
       TestCase.assertThrowsContaining(() => (array[0] = array), "Missing value for property 'TestObject.doubleCol'");
-      TestCase.assertThrowsContaining(() => (array[2] = { doubleCol: 1 }), "Requested index 2 calling set() on list 'LinkTypesObject.arrayCol' when max is 1");
+      TestCase.assertThrowsContaining(
+        () => (array[2] = { doubleCol: 1 }),
+        "Requested index 2 calling set() on list 'LinkTypesObject.arrayCol' when max is 1",
+      );
       TestCase.assertThrowsContaining(() => (array[-1] = { doubleCol: 1 }), "Index -1 cannot be less than zero.");
 
       array["foo"] = "bar";

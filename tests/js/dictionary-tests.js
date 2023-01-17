@@ -651,7 +651,7 @@ module.exports = {
     TestCase.assertDefined(asJson[0].a, "a exists");
     const a = asJson[0].a;
     TestCase.assertEqual(Object.keys(a).length, 3, "three properties");
-    Object.keys(a).forEach(k => {
+    Object.keys(a).forEach((k) => {
       TestCase.assertEqual(a[k], dict.a[k], `value of '${k}'`);
     });
 

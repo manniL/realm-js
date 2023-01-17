@@ -309,6 +309,7 @@ class SyncSessionErrorBase {
 public:
     virtual typename T::Function func() = 0;
     virtual void operator()(std::shared_ptr<SyncSession>, SyncError){};
+
 protected:
     static typename T::Object create_error_object(typename T::Context ctx, const SyncError& error)
     {
@@ -484,8 +485,8 @@ public:
     }
 
     // This function is called on the sync client's event loop thread.
-    bool operator()(const std::string& server_address, sync::port_type server_port,
-                    const char* pem_data, size_t pem_size, int preverify_ok, int depth)
+    bool operator()(const std::string& server_address, sync::port_type server_port, const char* pem_data,
+                    size_t pem_size, int preverify_ok, int depth)
     {
         const std::string pem_certificate{pem_data, pem_size};
         {
@@ -882,10 +883,11 @@ void SessionClass<T>::wait_for_completion(Direction direction, ContextType ctx, 
                 if (!status.is_ok()) {
                     // the Status argument is currently always constructed from a std:error_code
                     std::error_code error = status.get_std_error_code();
-                    arguments.push_back(Object::create_obj(ctx, {
-                        {"message", Value::from_string(ctx, error.message())},
-                        {"errorCode", Value::from_number(ctx, error.value())},
-                    }));
+                    arguments.push_back(
+                        Object::create_obj(ctx, {
+                                                    {"message", Value::from_string(ctx, error.message())},
+                                                    {"errorCode", Value::from_number(ctx, error.value())},
+                                                }));
                 }
                 Function<T>::callback(ctx, callback, arguments.size(), arguments.data());
             });

@@ -249,7 +249,7 @@ describe("Realm objects", () => {
           realm.create(PersonWithId, { _id, name: "John Doe", age: 42 }, Realm.UpdateMode.Never);
         }),
       ).throws(
-        `Attempting to create an object of type '${PersonWithId.schema.name}' with an existing primary key value '${_id}'.`,
+        `Attempting to create an object of type '${PersonWithId.schema.name}' with an existing primary key value '${_id}'`,
       );
 
       // Expect only one instance of 'PersonWithId' in db after all updates

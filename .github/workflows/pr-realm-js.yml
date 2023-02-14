@@ -6,7 +6,7 @@ on:
   pull_request:
 
 concurrency:
-  group: ${{ github.head_ref }}
+  group: ${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
@@ -33,7 +33,9 @@ jobs:
           - { os: android, runner: ubuntu-latest, arch: x86, artifact-path: react-native/android/src/main/jniLibs }
           - { os: darwin, runner: macos-latest, arch: x64, artifact-path: prebuilds, test-node: true, test-electron: true }
           - { os: darwin, runner: macos-latest, arch: arm64, artifact-path: prebuilds, test-node: true, test-electron: true }
-          - { os: ios, runner: macos-latest, arch: apple, artifact-path: react-native/ios/realm-js-ios.xcframework }
+          - { os: ios, runner: macos-latest, arch: simulator, artifact-path: react-native/ios/realm-js-ios.xcframework }
+          - { os: ios, runner: macos-latest, arch: catalyst, artifact-path: react-native/ios/realm-js-ios.xcframework }
+          - { os: ios, runner: macos-latest, arch: ios, artifact-path: react-native/ios/realm-js-ios.xcframework }
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -146,9 +148,12 @@ jobs:
         run: npm run prebuild:node -- --arch=${{matrix.variant.arch}}
 
       # build the c++ library for IOS
+      # the Info.plist needs to be regenerated with all libraries in place
       - name: Build iOS
         if: ${{ (matrix.variant.os == 'ios') }}
-        run: npm run prebuild:ios
+        run: |
+          npm run prebuild:ios -- ${{matrix.variant.arch}}
+          rm -vf ${{ matrix.variant.artifact-path }}/Info.plist
 
       # build the c++ library for Android
       - name: Build Android
@@ -157,6 +162,8 @@ jobs:
         env:
           ANDROID_NDK: ${{ env.ANDROID_SDK_ROOT }}/ndk/${{ env.NDK_VERSION }}
 
+      # Due to a limitation in upload-artifact a redundant file is needed to force 
+      # preserving paths (https://github.com/actions/upload-artifact/issues/174) 
       - name: Upload prebuild artifact
         uses: actions/upload-artifact@v2
         with:
@@ -165,9 +172,37 @@ jobs:
             dependencies.list
             ${{ matrix.variant.artifact-path }}
 
+  ios-xcframework:
+    name: Generate Info.plist with all frameworks in place
+    needs: [build]
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+
+      - name: Download prebuilds
+        uses: actions/download-artifact@v2
+        with:
+          name: realm-js-prebuilds
+
+      - name: Regenerate Info.plist
+        run: scripts/regen-info-plist.sh react-native/ios/realm-js-ios.xcframework
+
+      # Due to a limitation in upload-artifact a redundant file is needed to force 
+      # preserving paths (https://github.com/actions/upload-artifact/issues/174) 
+      - name: Upload prebuild artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: realm-js-prebuilds
+          path: |
+            dependencies.list
+            react-native/ios/realm-js-ios.xcframework/Info.plist
+
   integration-tests:
     name: Integration tests (${{matrix.variant.target}}) for ${{ matrix.variant.environment }} on ${{ matrix.variant.os }}
-    needs: [build]
+    needs: [build, ios-xcframework]
     env:
       REALM_DISABLE_ANALYTICS: 1
       MOCHA_REMOTE_TIMEOUT: 60000
@@ -194,8 +229,8 @@ jobs:
           - { os: darwin, target: "test:renderer", runner: macos-latest, environment: electron }
           - { os: darwin, target: test, runner: macos-latest, environment: node }
           - { os: android, target: "test:android", runner: macos-latest, environment: react-native, arch: "armeabi-v7a" }
-          - { os: ios, target: "test:ios", runner: macos-latest, environment: react-native, arch: "apple" }
-          #- { os: ios, target: "test:catalyst", runner: macos-latest, environment: react-native, arch: "apple" }
+          - { os: ios, target: "test:ios", runner: macos-latest, environment: react-native, arch: "ios" }
+          #- { os: ios, target: "test:catalyst", runner: macos-latest, environment: react-native, arch: "catalyst" }
     timeout-minutes: 60
     steps:
       - name: Generate Cluster Differentiator
